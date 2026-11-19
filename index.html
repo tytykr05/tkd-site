@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Тхэквондо — пхумсэ и разбор поединка</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 16px;
+      line-height: 1.5;
+      background: #f4f6f8;
+      color: #17202a;
+    }
+
+    h1, h2 {
+      color: #163a70;
+    }
+
+    section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px #00000010;
+    }
+
+    .note {
+      color: #555;
+    }
+
+    .item {
+      border-bottom: 1px solid #ddd;
+      padding: 12px 0;
+    }
+
+    summary {
+      cursor: pointer;
+    }
+
+    label {
+      display: inline-block;
+      margin: 6px 10px 6px 0;
+    }
+
+    input {
+      width: 110px;
+      padding: 8px;
+      margin-left: 4px;
+    }
+
+    button {
+      padding: 10px 16px;
+      background: #1957a6;
+      color: white;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #12427f;
+    }
+
+    #result {
+      margin-top: 18px;
+      padding: 12px 18px;
+      background: #eef4ff;
+      border-radius: 8px;
+    }
+
+    #search {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px;
+      margin: 8px 0 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Тхэквондо: пхумсэ и разбор поединка</h1>
+
+  <section>
+    <h2>Пхумсэ WT</h2>
+    <p class="note">
+      Здесь указаны названия форм. Это не полные инструкции по выполнению:
+      сверяй движения с материалами своего клуба и тренером.
+    </p>
+
+    <label for="search">Найти пхумсэ:</label><br>
+    <input id="search" type="search" placeholder="Например, Тхэгык 1">
+
+    <div id="poomsae-list"></div>
+  </section>
+
+  <section>
+    <h2>Разбор статистики поединка</h2>
+    <p class="note">
+      Введи данные вручную. Сайт считает точность атак и сравнивает счёт,
+      но не анализирует видео и не заменяет тренера или судей.
+    </p>
+
+    <form id="bout-form">
+      <label>
+        Твои очки:
+        <input type="number" min="0" step="1" name="my_points" value="0" required>
+      </label><br>
+
+      <label>
+        Очки соперника:
+        <input type="number" min="0" step="1" name="opponent_points" value="0" required>
+      </label><br>
+
+      <label>
+        Твои попытки атак:
+        <input type="number" min="0" step="1" name="attempts" value="0" required>
+      </label><br>
+
+      <label>
+        Твои попадания:
+        <input type="number" min="0" step="1" name="hits" value="0" required>
+      </label><br>
+
+      <label>
+        Попытки соперника:
+        <input type="number" min="0" step="1" name="opponent_attempts" value="0" required>
+      </label><br>
+
+      <label>
+        Попадания соперника:
+        <input type="number" min="0" step="1" name="opponent_hits" value="0" required>
+      </label><br>
+
+      <label>
+        Твои предупреждения:
+        <input type="number" min="0" step="1" name="warnings" value="0" required>
+      </label><br><br>
+
+      <button type="submit">Разобрать статистику</button>
+    </form>
+
+    <div id="result" hidden></div>
+  </section>
+
+  <script>
+    const poomsae = [
+      { name: "Тхэгык 1 — Иль Джанг", level: "Начальный", info: "Первое пхумсэ серии Тхэгык." },
+      { name: "Тхэгык 2 — И Джанг", level: "Начальный", info: "Второе пхумсэ серии Тхэгык." },
+      { name: "Тхэгык 3 — Сам Джанг", level: "Начальный", info: "Третье пхумсэ серии Тхэгык." },
+      { name: "Тхэгык 4 — Са Джанг", level: "Начальный", info: "Четвёртое пхумсэ серии Тхэгык." },
+      { name: "Тхэгык 5 — О Джанг", level: "Средний", info: "Пятое пхумсэ серии Тхэгык." },
+      { name: "Тхэгык 6 — Юк Джанг", level: "Средний", info: "Шестое пхумсэ серии Тхэгык." },
+      { name: "Тхэгык 7 — Чхиль Джанг", level: "Средний", info: "Седьмое пхумсэ серии Тхэгык." },
+      { name: "Тхэгык 8 — Пхаль Джанг", level: "Средний", info: "Восьмое пхумсэ серии Тхэгык." },
+      { name: "Корё", level: "Продвинутый", info: "Пхумсэ для чёрного пояса." },
+      { name: "Кымган", level: "Продвинутый", info: "Пхумсэ для чёрного пояса." },
+      { name: "Тхэбэк", level: "Продвинутый", info: "Пхумсэ для чёрного пояса." },
+      { name: "Пхёнвон", level: "Продвинутый", info: "Пхумсэ для чёрного пояса." },
+      { name: "Сипджин", level: "Продвинутый", info: "Пхумсэ для чёрного пояса." },
+      { name: "Читхэ", level: "Продвинутый", info: "Пхумсэ для чёрного пояса." },
+      { name: "Чхонквон", level: "Продвинутый", info: "Пхумсэ для чёрного пояса." },
+      { name: "Хансу", level: "Продвинутый", info: "Пхумсэ для чёрного пояса." },
+      { name: "Ильё", level: "Продвинутый", info: "Пхумсэ для чёрного пояса." }
+    ];
+
+    const list = document.getElementById("poomsae-list");
+    const search = document.getElementById("search");
+
+    function showPoomsae(filter = "") {
+      list.replaceChildren();
+
+      const matches = poomsae.filter(form =>
+        form.name.toLowerCase().includes(filter.toLowerCase())
+      );
+
+      if (matches.length === 0) {
+        list.textContent = "Ничего не найдено.";
+        return;
+      }
+
+      for (const form of matches) {
+        const details = document.createElement("details");
+        details.className = "item";
+
+        const summary = document.createElement("summary");
+        summary.textContent = `${form.name} — ${form.level}`;
+
+        const description = document.createElement("p");
+        description.textContent = form.info;
+
+        const note = document.createElement("p");
+        note.className = "note";
+        note.textContent =
+          "Пошаговая последовательность здесь не указана. Добавляй её только по проверенному материалу своего клуба.";
+
+        details.append(summary, description, note);
+        list.appendChild(details);
+      }
+    }
+
+    search.addEventListener("input", () => showPoomsae(search.value));
+    showPoomsae();
+
+    document.getElementById("bout-form").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const formData = new FormData(event.currentTarget);
+
+      const values = {};
+      for (const key of [
+        "my_points", "opponent_points", "attempts", "hits",
+        "opponent_attempts", "opponent_hits", "warnings"
+      ]) {
+        values[key] = Number(formData.get(key));
+      }
+
+      const result = document.getElementById("result");
+
+      if (Object.values(values).some(value => !Number.isInteger(value) || value < 0)) {
+        result.hidden = false;
+        result.textContent = "Введи целые числа, не меньше нуля.";
+        return;
+      }
+
+      if (values.hits > values.attempts ||
+          values.opponent_hits > values.opponent_attempts) {
+        result.hidden = false;
+        result.textContent = "Попаданий не может быть больше, чем попыток.";
+        return;
+      }
+
+      const myAccuracy = values.attempts
+        ? values.hits / values.attempts * 100
+        : 0;
+
+      const opponentAccuracy = values.opponent_attempts
+        ? values.opponent_hits / values.opponent_attempts * 100
+        : 0;
+
+      const report = [
+        `Счёт: ${values.my_points} : ${values.opponent_points}.`,
+        `Точность твоих атак по введённым данным: ${myAccuracy.toFixed(1)}%.`,
+        `Точность атак соперника: ${opponentAccuracy.toFixed(1)}%.`
+      ];
+
+      if (myAccuracy > opponentAccuracy + 10) {
+        report.push("Твои атаки были точнее по введённым данным. Обсуди с тренером, как сохранить качество атак.");
+      } else if (opponentAccuracy > myAccuracy + 10) {
+        report.push("У соперника точность выше. На тренировке можно обсудить с тренером дистанцию и защиту.");
+      } else {
+        report.push("Точность атак примерно одинаковая. Для подробного разбора полезно сравнить эпизоды по раундам.");
+      }
+
+      if (values.warnings >= 2) {
+        report.push("Предупреждений много: разберись с их причинами вместе с тренером.");
+      } else if (values.warnings === 1) {
+        report.push("Обрати внимание на эпизод, за который дали предупреждение.");
+      } else {
+        report.push("По введённым данным предупреждений не было.");
+      }
+
+      if (values.my_points > values.opponent_points) {
+        report.push("По введённому счёту ты набрал больше очков.");
+      } else if (values.my_points < values.opponent_points) {
+        report.push("По введённому счёту соперник набрал больше очков.");
+      } else {
+        report.push("По введённому счёту ничья.");
+      }
+
+      report.push("Это ориентировочный расчёт, а не оценка судейства или техники.");
+
+      const heading = document.createElement("h3");
+      heading.textContent = "Результат";
+
+      const list = document.createElement("ul");
+      for (const line of report) {
+        const item = document.createElement("li");
+        item.textContent = line;
+        list.appendChild(item);
+      }
+
+      result.replaceChildren(heading, list);
+      result.hidden = false;
+    });
+  </script>
+</body>
+</html>
+2. Создай репозиторий на GitHub
+Зайди на https://github.com/ и войди в аккаунт.
+Нажми New repository.
+Назови его, например, tkd-site.
+Выбери Public — для бесплатного GitHub Pages это самый простой вариант. Тогда исходный код тоже смогут видеть другие.
+Нажми Create repository.
+3. Загрузи файл
+В репозитории нажми Add file → Upload files.
+Перетащи туда index.html или выбери его через окно файлов.
+Убедись, что он находится в корне репозитория, а не внутри другой папки.
+Нажми Commit changes.
+Важно: файл должен называться им
