@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#251459">
+  <title>Пхумсэ WT — учебный справочник</title>
+
+  <style>
+    :root {
+      --text: #f7f6ff;
+      --muted: #e3e0f4;
+      --page: #101321;
+      --panel: #191b2c;
+      --header: #251459;
+      --border: #ffffff36;
+      --button: #ffffff20;
+      --shadow: #00000035;
+    }
+
+    body.light {
+      --text: #19182a;
+      --muted: #414057;
+      --page: #f1f2f8;
+      --panel: #ffffff;
+      --header: #34217a;
+      --border: #201b5030;
+      --button: #ffffffb8;
+      --shadow: #17102a20;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse at top left, #272047 0, transparent 42%),
+        var(--page);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      line-height: 1.55;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .header {
+      position: sticky;
+      z-index: 10;
+      top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px max(18px, calc((100% - 1100px) / 2));
+      background: linear-gradient(110deg, #3167c9, #321574, #21104a);
+      box-shadow: 0 4px 18px #0005;
+    }
+
+    .brand {
+      color: white;
+      text-decoration: none;
+      font-size: 19px;
+      font-weight: bold;
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .header-nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .round-button {
+      width: 42px;
+      height: 42px;
+      border: 1px solid #ffffff50;
+      border-radius: 50%;
+      background: #ffffff25;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .wrap {
+      width: min(1100px, calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      margin: 24px 0;
+      padding: 34px 22px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: linear-gradient(125deg, #263b84, #711f82, #bd3d45);
+      color: white;
+      text-align: center;
+      box-shadow: 0 12px 30px var(--shadow);
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(27px, 5vw, 42px);
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin: 0 auto;
+      color: #ffffffdf;
+    }
+
+    .section {
+      margin: 28px 0;
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--panel);
+      box-shadow: 0 8px 24px var(--shadow);
+    }
+
+    .section h2 {
+      margin-top: 0;
+    }
+
+    .section-note {
+      color: var(--muted);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 16px 0;
+    }
+
+    .search {
+      width: min(100%, 370px);
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--button);
+      color: var(--text);
+      font-size: 16px;
+    }
+
+    .search::placeholder {
+      color: var(--muted);
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter {
+      padding: 9px 13px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--button);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .filter.active {
+      background: #6652d7;
+      color: white;
+      border-color: transparent;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .card {
+      overflow: hidden;
+      padding: 21px;
+      border: 1px solid #ffffff45;
+      border-radius: 18px;
+      color: white;
+      box-shadow: 0 8px 20px var(--shadow);
+    }
+
+    .tone-0 { background: linear-gradient(140deg, #087d9d, #23b6d1); }
+    .tone-1 { background: linear-gradient(140deg, #147a65, #60bd44); }
+    .tone-2 { background: linear-gradient(140deg, #6c31a4, #d23a62); }
+    .tone-3 { background: linear-gradient(140deg, #1758a8, #7331a2); }
+    .tone-4 { background: linear-gradient(140deg, #a83231, #df6a25); }
+    .tone-5 { background: linear-gradient(140deg, #315c77, #6c45a6); }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.3;
+    }
+
+    .roman {
+      display: block;
+      margin-top: 4px;
+      font-size: 15px;
+      font-weight: normal;
+      opacity: 0.88;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      padding: 6px 10px;
+      border: 1px solid #ffffff70;
+      border-radius: 999px;
+      background: #00000020;
+      font-size: 12px;
+    }
+
+    .symbol {
+      margin: 12px 0 5px;
+      color: #ffffffdf;
+      font-size: 14px;
+    }
+
+    .description {
+      min-height: 82px;
+      margin: 8px 0 18px;
+    }
+
+    .video-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border: 1px solid #ffffff70;
+      border-radius: 12px;
+      background: #00000024;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .video-link:hover {
+      background: #00000040;
+    }
+
+    .video-link small {
+      display: block;
+      margin-top: 2px;
+      font-weight: normal;
+      opacity: 0.85;
+    }
+
+    .empty {
+      display: none;
+      padding: 20px 0;
+      color: var(--muted);
+    }
+
+    .source-link {
+      color: var(--text);
+      font-weight: bold;
+    }
+
+    .footer {
+      padding: 22px 0 40px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .to-top {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 48px;
+      height: 48px;
+      border: 0;
+      border-radius: 50%;
+      background: #624bd1;
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 5px 18px #0005;
+    }
+
+    @media (max-width: 600px) {
+      .header {
+        padding: 10px 14px;
+      }
+
+      .header-nav {
+        gap: 10px;
+      }
+
+      .header-nav a {
+        font-size: 12px;
+      }
+
+      .brand {
+        font-size: 16px;
+      }
+
+      .section {
+        padding: 16px;
+      }
+
+      .card h3 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <a class="brand" href="#top">🥋 Пхумсэ WT</a>
+
+    <nav class="header-nav" aria-label="Навигация">
+      <a href="#forms">Пхумсэ</a>
+      <a href="#about">О сайте</a>
+      <button class="round-button" id="theme-button" type="button"
+              aria-label="Сменить тему" title="Сменить тему">☀</button>
+    </nav>
+  </header>
+
+  <main class="wrap" id="top">
+    <section class="hero">
+      <h1>Пхумсэ тхэквондо</h1>
+      <p>
+        Краткий справочник по формам WT: символика, общий характер
+        и ссылки на видеоматериалы.
+      </p>
+    </section>
+
+    <section class="section" id="forms">
+      <h2>Формы WT</h2>
+      <p class="section-note">
+        Описания здесь краткие и не заменяют занятия с тренером.
+        Видео открываются на сайте-источнике.
+      </p>
+
+      <div class="controls">
+        <input class="search" id="search" type="search"
+               placeholder="Найти пхумсэ…" aria-label="Найти пхумсэ">
+
+        <div class="filters" aria-label="Фильтр пхумсэ">
+          <button class="filter active" type="button" data-filter="all">Все</button>
+          <button class="filter" type="button" data-filter="taegeuk">Тхэгык</button>
+          <button class="filter" type="button" data-filter="dan">Дан</button>
+        </div>
+      </div>
+
+      <div class="cards" id="cards"></div>
+      <p class="empty" id="empty">Ничего не найдено. Попробуй другой запрос.</p>
+    </section>
+
+    <section class="section" id="about">
+      <h2>О материалах</h2>
+      <p class="section-note">
+        Страница создана как самостоятельный учебный справочник.
+        Формулировки и оформление отличаются от сайта-источника.
+        Видео не копируются: ссылка открывает исходную страницу,
+        где нужно выбрать нужное пхумсэ.
+      </p>
+      <p>
+        Источник видеоматериалов:
+        <a class="source-link" href="https://sakhalgo.github.io/tkd/"
+           target="_blank" rel="noopener noreferrer">
+          sakhalgo.github.io/tkd/
+        </a>
+      </p>
+      <p class="section-note">
+        Символику и требования к аттестации сверяй с материалами своего клуба
+        и тренером: учебные программы и транслитерация могут различаться.
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer wrap">
+    Учебный справочник по пхумсэ WT
+  </footer>
+
+  <button class="to-top" id="to-top" type="button"
+          aria-label="Наверх" title="Наверх">↑</button>
+
+  <script>
+    const sourceUrl = "https://sakhalgo.github.io/tkd/";
+
+    const forms = [
+      {
+        title: "Тхэгык 1 — Иль Джан",
+        roman: "Taegeuk Il Jang",
+        type: "taegeuk",
+        level: "Серия Тхэгык",
+        symbol: "Символ: небо и свет",
+        description: "Начальная форма серии Тхэгык. Помогает осваивать основные принципы координации, устойчивости и контроля движений.",
+        color: 0
+      },
+      {
+        title: "Тхэгык 2 — И Джан",
+        roman: "Taegeuk Ee Jang",
+        type: "taegeuk",
+        level: "Серия Тхэгык",
+        symbol: "Символ: озеро",
+        description: "Форма связана с образом озера. Важно сохранять собранность и контроль, сочетая уверенные действия с плавностью.",
+        color: 1
+      },
+      {
+        title: "Тхэгык 3 — Сам Джан",
+        roman: "Taegeuk Sam Jang",
+        type: "taegeuk",
+        level: "Серия Тхэгык",
+        symbol: "Символ: огонь и солнце",
+        description: "Образ огня связан с энергией и ярким ритмом. При выполнении важны точность и контроль каждого действия.",
+        color: 2
+      },
+      {
+        title: "Тхэгык 4 — Са Джан",
+        roman: "Taegeuk Sa Jang",
+        type: "taegeuk",
+        level: "Серия Тхэгык",
+        symbol: "Символ: гром",
+        description: "Форма, связанная с образом грома. Она развивает решительность, устойчивость и умение сохранять чёткий ритм.",
+        color: 3
+      },
+      {
+        title: "Тхэгык 5 — О Джан",
+        roman: "Taegeuk Oh Jang",
+        type: "taegeuk",
+        level: "Серия Тхэгык",
+        symbol: "Символ: ветер",
+        description: "Образ ветра напоминает о смене мягкости и силы. Важны точность, контроль и умение менять темп.",
+        color: 4
+      },
+      {
+        title: "Тхэгык 6 — Юк Джан",
+        roman: "Taegeuk Yuk Jang",
+        type: "taegeuk",
+        level: "Серия Тхэгык",
+        symbol: "Символ: вода",
+        description: "Форма связана с водой и непрерывным движением. При выполнении полезно следить за равновесием и плавностью переходов.",
+        color: 5
+      },
+      {
+        title: "Тхэгык 7 — Чхиль Джан",
+        roman: "Taegeuk Chil Jang",
+        type: "taegeuk",
+        level: "Серия Тхэгык",
+        symbol: "Символ: гора",
+        description: "Образ горы подчёркивает устойчивость и собранность. Важны контроль корпуса и точность выполнения.",
+        color: 2
+      },
+      {
+        title: "Тхэгык 8 — Пхаль Джан",
+        roman: "Taegeuk Pal Jang",
+        type: "taegeuk",
+        level: "Серия Тхэгык",
+        symbol: "Символ: земля",
+        description: "Заключительная форма серии Тхэгык. Она собирает изученные принципы и требует уверенного контроля движений.",
+        color: 4
+      },
+      {
+        title: "Корё",
+        roman: "Koryo",
+        type: "dan",
+        level: "1-й дан",
+        symbol: "Название связано с историческим государством Корё",
+        description: "Форма для уровня первого дана. Требует концентрации, хорошей координации и уверенного исполнения.",
+        color: 3
+      },
+      {
+        title: "Кымган",
+        roman: "Keumgang",
+        type: "dan",
+        level: "2-й дан",
+        symbol: "Образ: твёрдость и прочность",
+        description: "Форма второго дана. Её название ассоциируют с прочностью; при выполнении особенно важны устойчивость и контроль.",
+        color: 0
+      },
+      {
+        title: "Тхэбэк",
+        roman: "Taebaek",
+        type: "dan",
+        level: "3-й дан",
+        symbol: "Название связано с горой Тхэбэк",
+        description: "Форма продвинутого уровня. Внимание уделяется собранности, точности и уверенной работе корпуса.",
+        color: 1
+      },
+      {
+        title: "Пхёнвон",
+        roman: "Pyongwon",
+        type: "dan",
+        level: "4-й дан",
+        symbol: "Образ: широкая равнина",
+        description: "Продвинутая форма, название которой связывают с открытым пространством. Важны баланс и контроль движений.",
+        color: 5
+      },
+      {
+        title: "Сипджин",
+        roman: "Sipjin",
+        type: "dan",
+        level: "5-й дан",
+        symbol: "Название связано с числом десять",
+        description: "Форма высокого уровня, требующая точности, внимания к ритму и уверенного владения техникой.",
+        color: 2
+      },
+      {
+        title: "Читхэ",
+        roman: "Jitae",
+        type: "dan",
+        level: "6-й дан",
+        symbol: "Образ: земля и опора",
+        description: "Продвинутая форма, в которой особенно важны устойчивость, равновесие и контроль положения тела.",
+        color: 4
+      },
+      {
+        title: "Чхонквон",
+        roman: "Cheonkwon",
+        type: "dan",
+        level: "7-й дан",
+        symbol: "Образ: небеса",
+        description: "Форма высокого уровня. Её исполнение требует точной координации, концентрации и контроля широких движений.",
+        color: 3
+      },
+      {
+        title: "Хансу",
+        roman: "Hansu",
+        type: "dan",
+        level: "8-й дан",
+        symbol: "Образ: вода",
+        description: "Продвинутая форма, связанная с образом воды. Важны плавность, адаптивность и точное управление движением.",
+        color: 0
+      },
+      {
+        title: "Ильё",
+        roman: "Ilyeo",
+        type: "dan",
+        level: "9-й дан",
+        symbol: "Образ: единство",
+        description: "Заключительная форма этой серии. Она подчёркивает концентрацию, собранность и согласованность движений.",
+        color: 1
+      }
+    ];
+
+    const cards = document.getElementById("cards");
+    const search = document.getElementById("search");
+    const emptyMessage = document.getElementById("empty");
+    let currentFilter = "all";
+
+    function renderCards() {
+      const query = search.value.trim().toLowerCase();
+
+      const visibleForms = forms.filter(form => {
+        const matchesFilter =
+          currentFilter === "all" || form.type === currentFilter;
+
+        const searchableText =
+          `${form.title} ${form.roman} ${form.level} ${form.symbol} ${form.description}`
+            .toLowerCase();
+
+        return matchesFilter && searchableText.includes(query);
+      });
+
+      cards.innerHTML = visibleForms.map(form => `
+        <article class="card tone-${form.color}">
+          <div class="card-top">
+            <h3>
+              ${form.title}
+              <span class="roman">${form.roman}</span>
+            </h3>
+            <span class="badge">${form.level}</span>
+          </div>
+
+          <p class="symbol">${form.symbol}</p>
+          <p class="description">${form.description}</p>
+
+          <a class="video-link"
+             href="${sourceUrl}"
+             target="_blank"
+             rel="noopener noreferrer">
+            <span>
+              ▶ Видеоматериалы
+              <small>Откроется сайт-источник; найди там эту форму</small>
+            </span>
+            <span aria-hidden="true">↗</span>
+          </a>
+        </article>
+      `).join("");
+
+      emptyMessage.style.display = visibleForms.length ? "none" : "block";
+    }
+
+    search.addEventListener("input", renderCards);
+
+    document.querySelectorAll(".filter").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".filter").forEach(item => {
+          item.classList.remove("active");
+        });
+
+        button.classList.add("active");
+        currentFilter = button.dataset.filter;
+        renderCards();
+      });
+    });
+
+    const themeButton = document.getElementById("theme-button");
+
+    if (localStorage.getItem("tkd-theme") === "light") {
+      document.body.classList.add("light");
+      themeButton.textContent = "🌙";
+    }
+
+    themeButton.addEventListener("click", () => {
+      document.body.classList.toggle("light");
+
+      const lightMode = document.body.classList.contains("light");
+      localStorage.setItem("tkd-theme", lightMode ? "light" : "dark");
+      themeButton.textContent = lightMode ? "🌙" : "☀";
+    });
+
+    document.getElementById("to-top").addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    renderCards();
+  </script>
+</body>
+</html>
